@@ -130,13 +130,13 @@ document.querySelectorAll(".gate-btn,.nav-cta,.party,.hero-cta").forEach(b=>{b.a
 // konfeti
 const confetti=()=>{if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
  const c=document.createElement("canvas");c.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:450";c.width=innerWidth;c.height=innerHeight;document.body.append(c);
- const g=c.getContext("2d"),cl=["#F4D06F","#A9C7D8","#B8C9A9","#E9A27F","#C9BEDC","#DDA6A8"],ps=Array.from({length:150},()=>({x:innerWidth/2,y:innerHeight*.7,vx:(Math.random()-.5)*18,vy:-Math.random()*18-5,s:Math.random()*8+5,r:Math.random()*6,c:cl[Math.random()*6|0]}));let f=0;
- (function t(){g.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()});++f<140?requestAnimationFrame(t):c.remove()})()};
+ const g=c.getContext("2d"),cl=["#F4D06F","#A9C7D8","#B8C9A9","#E9A27F","#C9BEDC","#DDA6A8"],ps=Array.from({length:innerWidth<700?60:120},()=>({x:innerWidth/2,y:innerHeight*.7,vx:(Math.random()-.5)*18,vy:-Math.random()*18-5,s:Math.random()*8+5,r:Math.random()*6,c:cl[Math.random()*6|0]}));let f=0;
+ (function t(){g.setTransform(1,0,0,1,0,0);g.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;const co=Math.cos(p.r),si=Math.sin(p.r);g.setTransform(co,si,-si,co,p.x,p.y);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2)});++f<110?requestAnimationFrame(t):c.remove()})()};
 $("#party").onclick=confetti;
 
 // gerbang pembuka. AUTO_BUKA = detik sampai terbuka sendiri (0 = harus diklik)
 const AUTO_BUKA=0,gate=$("#gate");
-const openGate=fast=>{if(!gate.isConnected||gate.classList.contains("open"))return;gate.classList.add("open");if(!fast)confetti();document.body.classList.remove("gated");try{sessionStorage.setItem("ts-open","1")}catch(e){}setTimeout(()=>gate.remove(),fast?0:1200)};
+const openGate=fast=>{if(!gate.isConnected||gate.classList.contains("open"))return;gate.classList.add("open");if(fast){document.body.classList.remove("gated")}else{setTimeout(()=>requestAnimationFrame(confetti),350);setTimeout(()=>document.body.classList.remove("gated"),650)};try{sessionStorage.setItem("ts-open","1")}catch(e){}setTimeout(()=>gate.remove(),fast?0:1200)};
 if(document.documentElement.classList.contains("seen")){gate.remove();document.body.classList.remove("gated")}
 else{$("#gateBtn").onclick=()=>openGate();$("#gateSkip").onclick=()=>openGate(true);addEventListener("keydown",e=>{if(e.key==="Escape")openGate(true)});if(AUTO_BUKA>0)setTimeout(openGate,AUTO_BUKA*1000);$("#gateBtn").focus()}
 })();
