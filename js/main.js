@@ -52,7 +52,7 @@ const data=[
  [["Minggu 1","Laporan akhir","Semua pekerjaan dirapikan dan dipertanggungjawabkan."],
   ["Minggu 3","Serah terima","Estafet diberikan kepada tim berikutnya dengan doa dan pesan."],
   ["Minggu 4","Perpisahan","Foto bersama terakhir, dan janji untuk tetap saling jaga."]]]];
-const bph=[["Nama Ketua","Ketua"],["Nama Sekretaris","Sekretaris"],["Nama Bendahara","Bendahara"]];
+const bph=[["Nama Kepala Departemen","Kepala Departemen"],["Nama Sekretaris I","Sekretaris I Departemen"],["Nama Sekretaris II","Sekretaris II Departemen"]];
 const team=["Nama Anggota 1","Nama Anggota 2","Nama Anggota 3","Nama Anggota 4","Nama Anggota 5","Nama Anggota 6"];
 // ===== akhir bagian isi =====
 
@@ -60,23 +60,14 @@ const $=s=>document.querySelector(s),pad=n=>String(n+1).padStart(2,"0"),plain=h=
 $("#marquee").innerHTML=[...data,...data].map(m=>m[0]+" <i>✦</i>").join(" ");
 $("#folders").innerHTML=data.map((m,i)=>`<button class="folder reveal" style="--c:${m[2]}" data-i="${i}"><span class="folder-n">${pad(i)}</span><span class="folder-dot"></span><span class="folder-t"><small>${m[0]}</small>${m[1]}</span></button>`).join("");
 $("#months").innerHTML=data.map((m,i)=>{const st=m[5];return `<section class="month" id="m${i}" style="--c:${m[2]}">
-<div class="chapter-head"><div class="month-n">${pad(i)}</div><div><p class="cap">Bab ${i+1} · ${m[0]}</p><h2 class="month-h">${m[1]}</h2></div></div>
+<span class="mark" aria-hidden="true">${m[0]}</span><div class="chapter-head"><div class="month-n">${pad(i)}</div><div><p class="cap">Bab ${i+1} · ${m[0]}</p><h2 class="month-h">${m[1]}</h2></div></div>
 <p class="month-intro">${m[3]}</p>
 <div class="story"><div class="story-photo"><div class="frame">${st.map((s,k)=>`<button class="ph${k?"":" on"}" style="--g:${m[2]};--img:url(assets/${i+1}-${k+1}.jpg)" aria-label="Perbesar foto"></button>`).join("")}<span class="stamp">${m[0]} · ${st[0][0]}</span></div></div>
 <div class="steps">${st.map((s,k)=>`<article class="step${k?"":" on"}" data-p="${k}"><p class="step-date">${s[0]}</p><h3>${s[1]}</h3><p>${s[2]}</p></article>`).join("")}<div class="step quote" data-p="${st.length-1}"><blockquote>${m[4]}</blockquote></div></div></div></section>`}).join("");
 const cols=["#F4D06F","#A9C7D8","#B8C9A9","#E9A27F","#C9BEDC","#DDA6A8"];
-$("#peopleGrid").innerHTML=team.map((n,i)=>`<div class="person reveal"><div class="ph" style="--g:${cols[i%6]};--img:url(assets/tim-${i+1}.jpg)"></div><div class="person-info"><span class="person-name">${n}</span></div></div>`).join("");
+$("#bphGrid").innerHTML=bph.map((p,i)=>`<article class="bph-card reveal" style="--c:${cols[i*2%6]}"><div class="bph-photo"><div class="ph" style="--g:${cols[i*2%6]};--img:url(assets/bph-${i+1}.jpg)"></div></div><span class="bph-role">${p[1]}</span><b class="bph-name">${p[0]}</b></article>`).join("");
+$("#memberList").innerHTML=team.map((n,i)=>`<li style="--d:${cols[i%6]}">${n}</li>`).join("");
 
-// hero: ganti otomatis, bisa juga diklik (foto atau titik)
-const hc=["#F4D06F","#A9C7D8","#DDA6A8"];
-$("#stack").innerHTML=bph.map((p,i)=>`<button class="polaroid" style="--img:url(assets/bph-${i+1}.jpg);--g:${hc[i%3]}"><span><b>${p[0]}</b><small>${p[1]}</small></span></button>`).join("");
-const pols=[...document.querySelectorAll(".polaroid")];let order=pols.slice(),timer;
-const dots=pols.map((_,i)=>{const b=document.createElement("button");b.setAttribute("aria-label","Foto "+(i+1));b.onclick=()=>{go(i);auto()};$("#dots").append(b);return b});
-const place=()=>{order.forEach((p,i)=>p.style.setProperty("--p",i));dots.forEach((d,i)=>d.classList.toggle("on",pols[i]===order[0]))};
-const next=()=>{order.push(order.shift());place()};
-const go=n=>{while(order[0]!==pols[n])order.push(order.shift());place()};
-const auto=()=>{clearInterval(timer);if(!matchMedia("(prefers-reduced-motion:reduce)").matches)timer=setInterval(()=>{if(!document.hidden)next()},4500)};
-$("#stack").addEventListener("click",()=>{next();auto()});place();auto();
 
 // klik folder / foto
 document.addEventListener("click",e=>{
@@ -113,9 +104,39 @@ const co=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return
  const el=e.target,to=+el.dataset.count;let t0;const step=t=>{t0=t0||t;const k=Math.min((t-t0)/1200,1);el.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}),{threshold:.6});
 document.querySelectorAll("[data-count]").forEach(el=>co.observe(el));
 
+// hero: kata bergantian (ubah daftar kata & warna di sini)
+const hw=[["Cerita","#F4D06F"],["Pengalaman","#A9C7D8"],["Pelajaran","#DDA6A8"]],sw=$("#swap"),hero=$("#top");
+sw.innerHTML=hw.map((w,i)=>`<span class="swap-w${i?"":" on"}">${w[0]}</span>`).join("");
+const hs=[...sw.children];let hi=0;const setW=()=>{sw.style.width=hs[hi].offsetWidth+"px"};setW();document.fonts&&document.fonts.ready.then(setW);addEventListener("resize",setW);hero.style.setProperty("--hl",hw[0][1]);
+setInterval(()=>{if(document.hidden)return;const o=hs[hi];o.classList.replace("on","out");setTimeout(()=>o.classList.remove("out"),700);hi=(hi+1)%hw.length;hs[hi].classList.add("on");setW();hero.style.setProperty("--hl",hw[hi][1])},2800);
+
+// ===== efek tambahan =====
+const split=el=>{const w=document.createTreeWalker(el,NodeFilter.SHOW_TEXT),ns=[];while(w.nextNode())ns.push(w.currentNode);
+ ns.forEach(n=>{const f=document.createDocumentFragment();n.textContent.split(/(\s+)/).forEach(t=>{if(!t.trim()){f.append(t);return}const s=document.createElement("span");s.className="w";s.textContent=t;f.append(s)});n.replaceWith(f)});return[...el.querySelectorAll(".w")]};
+const rail=$("#rail");
+rail.innerHTML=data.map((m,i)=>`<a href="#m${i}" data-t="${m[0]}" aria-label="Bab ${i+1}: ${m[0]}"></a>`).join("");
+const ro=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const i=+e.target.id.slice(1);rail.querySelectorAll("a").forEach((a,k)=>a.classList.toggle("on",k===i));rail.style.setProperty("--c",data[i][2])}),{rootMargin:"-50% 0px -50% 0px"});
+document.querySelectorAll(".month").forEach(s=>ro.observe(s));
+const marks=[...document.querySelectorAll(".mark")],lit=[...document.querySelectorAll(".between h2,.month-intro")].map(el=>[el,split(el)]),monthsEl=$("#months");
+const fx=()=>{const vh=innerHeight;
+ marks.forEach(m=>{m.style.transform="translateY("+m.parentNode.getBoundingClientRect().top*-.12+"px)"});
+ lit.forEach(([el,ws])=>{const r=el.getBoundingClientRect(),p=Math.min(Math.max((vh*.85-r.top)/(r.height+vh*.25),0),1),n=Math.round(p*ws.length);ws.forEach((w,i)=>w.classList.toggle("lit",i<n))});
+ const r=monthsEl.getBoundingClientRect();rail.classList.toggle("show",r.top<vh*.5&&r.bottom>vh*.5)};
+addEventListener("scroll",fx,{passive:true});addEventListener("resize",fx);fx();
+
+// tombol magnetik
+document.querySelectorAll(".gate-btn,.nav-cta,.party,.hero-cta").forEach(b=>{b.addEventListener("mousemove",e=>{const r=b.getBoundingClientRect();b.style.transform="translate("+(e.clientX-r.left-r.width/2)*.25+"px,"+(e.clientY-r.top-r.height/2)*.25+"px)"});b.addEventListener("mouseleave",()=>{b.style.transform=""})});
+
+// konfeti
+const confetti=()=>{if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+ const c=document.createElement("canvas");c.style.cssText="position:fixed;inset:0;pointer-events:none;z-index:450";c.width=innerWidth;c.height=innerHeight;document.body.append(c);
+ const g=c.getContext("2d"),cl=["#F4D06F","#A9C7D8","#B8C9A9","#E9A27F","#C9BEDC","#DDA6A8"],ps=Array.from({length:150},()=>({x:innerWidth/2,y:innerHeight*.7,vx:(Math.random()-.5)*18,vy:-Math.random()*18-5,s:Math.random()*8+5,r:Math.random()*6,c:cl[Math.random()*6|0]}));let f=0;
+ (function t(){g.clearRect(0,0,c.width,c.height);ps.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.r+=.2;g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.fillRect(-p.s/2,-p.s/4,p.s,p.s/2);g.restore()});++f<140?requestAnimationFrame(t):c.remove()})()};
+$("#party").onclick=confetti;
+
 // gerbang pembuka. AUTO_BUKA = detik sampai terbuka sendiri (0 = harus diklik)
 const AUTO_BUKA=0,gate=$("#gate");
-const openGate=fast=>{if(!gate.isConnected||gate.classList.contains("open"))return;gate.classList.add("open");document.body.classList.remove("gated");try{sessionStorage.setItem("ts-open","1")}catch(e){}setTimeout(()=>gate.remove(),fast?0:1200)};
+const openGate=fast=>{if(!gate.isConnected||gate.classList.contains("open"))return;gate.classList.add("open");if(!fast)confetti();document.body.classList.remove("gated");try{sessionStorage.setItem("ts-open","1")}catch(e){}setTimeout(()=>gate.remove(),fast?0:1200)};
 if(document.documentElement.classList.contains("seen")){gate.remove();document.body.classList.remove("gated")}
 else{$("#gateBtn").onclick=()=>openGate();$("#gateSkip").onclick=()=>openGate(true);addEventListener("keydown",e=>{if(e.key==="Escape")openGate(true)});if(AUTO_BUKA>0)setTimeout(openGate,AUTO_BUKA*1000);$("#gateBtn").focus()}
 })();
