@@ -1,0 +1,6 @@
+Taruh foto BPH (PNG) di folder ini, dengan nama file:
+  kepala-departemen.png
+  sekretaris-1.png
+  sekretaris-2.png
+Nama file diatur di js/main.js bagian BPH.
+PNG transparan boleh: warna kartu akan tampak di belakang fotonya.

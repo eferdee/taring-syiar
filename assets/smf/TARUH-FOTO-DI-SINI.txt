@@ -1,0 +1,5 @@
+Taruh foto program ini di folder ini, dengan nama file:
+  cover.jpg  (foto lebar pembuka)
+  1.jpg 2.jpg 3.jpg 4.jpg 5.jpg  (foto dokumentasi)
+Nama dan jumlah file diatur di js/main.js bagian PROGRAM (folder "smf").
+Format lain (.png/.webp) boleh, ubah juga nama filenya di js/main.js.

@@ -13,12 +13,18 @@
 <body class="gated">
 <div class="gate" id="gate" role="dialog" aria-label="Sampul">
   <div class="gate-half l"></div><div class="gate-half r"></div>
+  <div class="gate-top"><span>Taring Syiar</span><span id="gateNum">000%</span><div class="gate-bar"><i id="gateBar"></i></div></div>
+  <div class="gate-cards" id="gateCards" aria-hidden="true"></div>
   <div class="gate-center">
-    <p class="gate-small">Album satu periode · Enam program kerja</p>
+    <p class="gate-small">Syiar Menggema · Syiar Berdakwah</p>
     <p class="gate-title">Taring Syiar<br><em>Satu Periode, Banyak Cerita</em></p>
-    <button class="gate-btn" id="gateBtn">Buka cerita</button>
+    <div class="gate-open">
+      <svg class="gate-ring" viewBox="0 0 200 200" aria-hidden="true"><defs><path id="gr" d="M100,100 m-80,0 a80,80 0 1,1 160,0 a80,80 0 1,1 -160,0"/></defs><text><textPath href="#gr" textLength="495" lengthAdjust="spacing">SATU PERIODE · BANYAK CERITA · SATU PERIODE · BANYAK CERITA ·</textPath></text></svg>
+      <button class="gate-btn" id="gateBtn" disabled>Memuat</button>
+    </div>
     <button class="gate-skip" id="gateSkip">Lewati</button>
   </div>
+  <div class="gate-strip" aria-hidden="true"><div id="gateStrip"></div></div>
 </div>
 <div class="progress" id="progress"></div>
 <header class="nav" id="nav">
@@ -73,6 +79,7 @@
 
 <footer class="closing">
   <h2>Terima kasih,<br><em>sampai jumpa</em><br>di periode berikutnya.</h2>
+  <p class="jargon reveal">Syiar <em>Menggema,</em><br>Syiar <em>Berdakwah.</em></p>
   <div class="closing-bottom"><span>Taring Syiar</span><button class="party" id="party">Rayakan</button><a href="#top">Kembali ke atas</a></div>
 </footer>
 
